@@ -1,5 +1,6 @@
 import { Usser } from '../models/usser.js';
 import { validationResult, check } from 'express-validator';
+import bcrypt from 'bcrypt';
 
 export const buscarUsuarios = async (req, res) => {
   try {
@@ -35,15 +36,18 @@ export const nuevoUsuario = async (req, res) => {
       Contrasenia
     } = req.body;
 
+    // Cifrar la contraseña utilizando bcrypt
+    const hashedPassword = await bcrypt.hash(Contrasenia, 10);
+
     const newUsser = new Usser({
       Nombre,
-      Contrasenia
+      Contrasenia: hashedPassword
     });
 
     const createdUsser = await newUsser.save();
     res.status(201).json(createdUsser);
   } catch (error) {
-    res.status(500).json({ error: 'Error al registrar el usuario', message: error.message});
+    res.status(500).json({ error: 'Error al registrar el usuario', message: error.message });
   }
 };
 
