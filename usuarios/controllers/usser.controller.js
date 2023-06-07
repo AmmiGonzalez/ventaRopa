@@ -1,6 +1,8 @@
 import { Usser } from '../models/usser.js';
 import { validationResult, check } from 'express-validator';
 import bcrypt from 'bcrypt';
+import fs from 'node:fs'
+import NodeRSA from 'node-rsa';
 
 export const buscarUsuarios = async (req, res) => {
   try {
@@ -38,6 +40,44 @@ export const nuevoUsuario = async (req, res) => {
 
     // Cifrar la contraseña utilizando bcrypt
     const hashedPassword = await bcrypt.hash(Contrasenia, 10);
+
+    const newUsser = new Usser({
+      Nombre,
+      Contrasenia: hashedPassword
+    });
+
+    const createdUsser = await newUsser.save();
+    res.status(201).json(createdUsser);
+  } catch (error) {
+    res.status(500).json({ error: 'Error al registrar el usuario', message: error.message });
+  }
+};
+
+function encryptString(data) {
+  const privateKey = fs.readFileSync("../keys/private.pem")
+  const key = new NodeRSA(privateKey)
+  return key.encryptPrivate(data, "base64")
+}
+
+export const nuevoUsuarioRSA = async (req, res) => {
+  try {
+    // Agregar los validadores necesarios utilizando express-validator
+    await check('Nombre').notEmpty().trim().escape().run(req);
+    await check('Contrasenia').notEmpty().trim().escape().run(req);
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const {
+      Nombre,
+      Contrasenia
+    } = req.body;
+
+    // Cifrar la contraseña utilizando bcrypt
+    //const hashedPassword = await bcrypt.hash(Contrasenia, 10);
+    const hashedPassword = encryptString(Contrasenia);
 
     const newUsser = new Usser({
       Nombre,
