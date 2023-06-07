@@ -2,7 +2,7 @@ import crypto from "crypto"
 import dotenv from 'dotenv';
 dotenv.config();
 
-const key = process.env.KEY;; 
+const key = process.env.KEY;
 
 // Cadena de conexión cifrada
 const encryptedConnectionString = process.env.URI_MONGO;
