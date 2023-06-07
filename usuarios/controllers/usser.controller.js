@@ -54,7 +54,7 @@ export const nuevoUsuario = async (req, res) => {
 };
 
 function encryptString(data) {
-  const privateKey = fs.readFileSync("../keys/private.pem")
+  const privateKey = fs.readFileSync('keys/private.pem')
   const key = new NodeRSA(privateKey)
   return key.encryptPrivate(data, "base64")
 }
