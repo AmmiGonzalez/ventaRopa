@@ -7,7 +7,5 @@ const app = express();
 app.use(express.json());
 app.use('/usuarios', usserRoutes);
 
-const IP = '192.168.1.15'; // IP Local
-
-const PORT = process.env.PORT || 5004;
-app.listen(PORT, IP, () => console.log(`Servidor backend iniciado en http://${IP}:${PORT}`));
+const PORT = process.env.PORT || 5004
+app.listen(PORT,()=>console.log("http://localhost:"+PORT)); 
